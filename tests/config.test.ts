@@ -114,7 +114,9 @@ describe('environment parsing', () => {
         const env = loadEnv({ NODE_ENV: 'development', JWT_SECRET: '' });
 
         expect(env.jwt.secret).toContain('development-only-insecure');
-        expect(warn).toHaveBeenCalledWith(expect.stringContaining('JWT_SECRET is not set'));
+        expect(warn).toHaveBeenCalledWith(
+          expect.stringContaining('JWT_SECRET is not set'),
+        );
       } finally {
         warn.mockRestore();
       }

@@ -72,7 +72,9 @@ describe('POST /products', () => {
     // Whitelisting happens in the controller via matchedData, so none of the
     // extra keys reach Mongoose.
     expect(response.body.data.product.id).not.toBe(forgedId);
-    expect(new Date(response.body.data.product.createdAt).getFullYear()).toBeGreaterThan(2020);
+    expect(new Date(response.body.data.product.createdAt).getFullYear()).toBeGreaterThan(
+      2020,
+    );
     expect(response.body.data.product).not.toHaveProperty('isAdminOnly');
   });
 
@@ -147,7 +149,9 @@ describe('PUT /products/:id', () => {
       .send({ price: 12 })
       .expect(400);
 
-    const fields = (response.body.error.details as { field: string }[]).map((d) => d.field);
+    const fields = (response.body.error.details as { field: string }[]).map(
+      (d) => d.field,
+    );
     expect(fields).toEqual(expect.arrayContaining(['name', 'quantity']));
   });
 

@@ -1,9 +1,5 @@
 import { type QueryFilter, type SortOrder, type UpdateQuery } from 'mongoose';
-import {
-  Product,
-  type IProduct,
-  type SortableProductField,
-} from '../../models/Product';
+import { Product, type IProduct, type SortableProductField } from '../../models/Product';
 import { HttpError } from '../../utils/HttpError';
 import {
   buildPaginationMeta,
@@ -97,7 +93,9 @@ export async function createProduct(input: ProductInput): Promise<ProductRespons
  * inserts share a `createdAt` to the millisecond) keep a stable order across
  * pages — otherwise page 2 could repeat or skip rows.
  */
-export async function listProducts(query: ListProductsQuery): Promise<ListProductsResult> {
+export async function listProducts(
+  query: ListProductsQuery,
+): Promise<ListProductsResult> {
   const page = query.page ?? 1;
   const limit = query.limit ?? DEFAULT_PAGE_SIZE;
   const filter = buildFilter(query);

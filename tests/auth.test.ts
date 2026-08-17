@@ -7,7 +7,10 @@ import { ADMIN_CREDENTIALS, createUser, USER_CREDENTIALS } from './helpers/auth'
 const app = createApp();
 
 /** Pulls the `details` entry for one field out of a validation error response. */
-function detailFor(body: { error: { details?: { field: string; message: string }[] } }, field: string) {
+function detailFor(
+  body: { error: { details?: { field: string; message: string }[] } },
+  field: string,
+) {
   return body.error.details?.find((detail) => detail.field === field);
 }
 
@@ -124,12 +127,18 @@ describe('POST /auth/register', () => {
       'password',
       'password must contain at least one letter',
     ],
-  ])('rejects %s with a 400 naming the field', async (_label, payload, field, message) => {
-    const response = await request(app).post('/auth/register').send(payload).expect(400);
+  ])(
+    'rejects %s with a 400 naming the field',
+    async (_label, payload, field, message) => {
+      const response = await request(app)
+        .post('/auth/register')
+        .send(payload)
+        .expect(400);
 
-    expect(response.body.error.code).toBe('VALIDATION_ERROR');
-    expect(detailFor(response.body, field)?.message).toBe(message);
-  });
+      expect(response.body.error.code).toBe('VALIDATION_ERROR');
+      expect(detailFor(response.body, field)?.message).toBe(message);
+    },
+  );
 });
 
 describe('POST /auth/login', () => {
@@ -155,7 +164,10 @@ describe('POST /auth/login', () => {
 
     await request(app)
       .post('/auth/login')
-      .send({ email: USER_CREDENTIALS.email.toUpperCase(), password: USER_CREDENTIALS.password })
+      .send({
+        email: USER_CREDENTIALS.email.toUpperCase(),
+        password: USER_CREDENTIALS.password,
+      })
       .expect(200);
   });
 

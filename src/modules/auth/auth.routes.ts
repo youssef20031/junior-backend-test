@@ -7,7 +7,13 @@ import { loginValidator, registerValidator } from './auth.validators';
 export const authRouter = Router();
 
 /** Public. Always creates a `user`; administrators are provisioned by the seed. */
-authRouter.post('/register', authLimiter, registerValidator, validate, authController.register);
+authRouter.post(
+  '/register',
+  authLimiter,
+  registerValidator,
+  validate,
+  authController.register,
+);
 
 /** Public. Returns the JWT that every /products route requires. */
 authRouter.post('/login', authLimiter, loginValidator, validate, authController.login);

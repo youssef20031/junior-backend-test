@@ -1,12 +1,7 @@
 import { Types } from 'mongoose';
 import request from 'supertest';
 import { createApp } from '../src/app';
-import {
-  bearer,
-  expiredTokenFor,
-  foreignlySignedToken,
-  tokenFor,
-} from './helpers/auth';
+import { bearer, expiredTokenFor, foreignlySignedToken, tokenFor } from './helpers/auth';
 import { seedOneProduct, seedProducts } from './helpers/products';
 
 const app = createApp();
@@ -193,7 +188,9 @@ describe('GET /products — filtering and sorting', () => {
 
   it('filters by a price range', async () => {
     // Seeded prices are 10, 20 … 250, so 50–200 covers exactly 16 of them.
-    const response = await get('/products?minPrice=50&maxPrice=200&limit=100').expect(200);
+    const response = await get('/products?minPrice=50&maxPrice=200&limit=100').expect(
+      200,
+    );
 
     const prices = (response.body.data.items as { price: number }[]).map((i) => i.price);
     expect(prices).toHaveLength(16);

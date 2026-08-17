@@ -54,10 +54,14 @@ describe('errorHandler — error translation', () => {
     );
     expect(validationError).toBeInstanceOf(mongoose.Error.ValidationError);
 
-    const response = await request(appThatFailsWith(validationError)).get('/boom').expect(400);
+    const response = await request(appThatFailsWith(validationError))
+      .get('/boom')
+      .expect(400);
 
     expect(response.body.error.code).toBe('VALIDATION_ERROR');
-    const fields = (response.body.error.details as { field: string }[]).map((d) => d.field);
+    const fields = (response.body.error.details as { field: string }[]).map(
+      (d) => d.field,
+    );
     expect(fields.sort()).toEqual(['name', 'price', 'quantity']);
   });
 
@@ -84,7 +88,9 @@ describe('errorHandler — error translation', () => {
   });
 
   it('falls back to a generic 409 message when the key is unknown', async () => {
-    const response = await request(appThatFailsWith({ code: 11000 })).get('/boom').expect(409);
+    const response = await request(appThatFailsWith({ code: 11000 }))
+      .get('/boom')
+      .expect(409);
 
     expect(response.body.error.message).toBe('A record with this value already exists');
   });
@@ -110,7 +116,9 @@ describe('errorHandler — error translation', () => {
   });
 
   it('handles a thrown value that is not an Error at all', async () => {
-    const response = await request(appThatFailsWith('a bare string')).get('/boom').expect(500);
+    const response = await request(appThatFailsWith('a bare string'))
+      .get('/boom')
+      .expect(500);
 
     expect(response.body.error.code).toBe('INTERNAL_ERROR');
   });

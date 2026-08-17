@@ -42,7 +42,10 @@ export const authenticate: RequestHandler = (req, _res, next) => {
   if (!result.ok) {
     next(
       result.reason === 'expired'
-        ? HttpError.unauthorized('Access token has expired — log in again', 'TOKEN_EXPIRED')
+        ? HttpError.unauthorized(
+            'Access token has expired — log in again',
+            'TOKEN_EXPIRED',
+          )
         : HttpError.unauthorized('Access token is invalid', 'TOKEN_INVALID'),
     );
     return;

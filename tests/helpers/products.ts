@@ -35,7 +35,9 @@ export async function seedProducts(count: number): Promise<ProductSeed[]> {
 }
 
 /** Inserts one product and returns its id. */
-export async function seedOneProduct(overrides: Partial<ProductSeed> = {}): Promise<string> {
+export async function seedOneProduct(
+  overrides: Partial<ProductSeed> = {},
+): Promise<string> {
   const product = await Product.create(makeProduct(overrides));
   return product._id.toString();
 }

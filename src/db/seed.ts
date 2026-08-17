@@ -16,7 +16,12 @@ const SAMPLE_PRODUCTS: SeedProduct[] = [
   { name: 'Mechanical Keyboard', category: 'Electronics', price: 89.5, quantity: 45 },
   { name: 'USB-C Hub', category: 'Electronics', price: 54.0, quantity: 80 },
   { name: '27" Monitor', category: 'Electronics', price: 199.99, quantity: 18 },
-  { name: 'Noise-Cancelling Headphones', category: 'Electronics', price: 149.95, quantity: 32 },
+  {
+    name: 'Noise-Cancelling Headphones',
+    category: 'Electronics',
+    price: 149.95,
+    quantity: 32,
+  },
   { name: 'Webcam 1080p', category: 'Electronics', price: 62.4, quantity: 60 },
   { name: 'Laptop Stand', category: 'Electronics', price: 39.99, quantity: 95 },
   { name: 'Portable SSD 1TB', category: 'Electronics', price: 129.0, quantity: 27 },
@@ -45,7 +50,11 @@ const SAMPLE_PRODUCTS: SeedProduct[] = [
   { name: 'Unclassified Gadget', price: 57.0, quantity: 5 },
 ];
 
-async function ensureUser(email: string, password: string, role: UserRole): Promise<void> {
+async function ensureUser(
+  email: string,
+  password: string,
+  role: UserRole,
+): Promise<void> {
   const existing = await User.exists({ email });
 
   if (existing !== null) {

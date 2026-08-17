@@ -32,7 +32,12 @@ export class HttpError extends Error {
   readonly code: ErrorCode;
   readonly details?: FieldError[];
 
-  constructor(statusCode: number, message: string, code: ErrorCode, details?: FieldError[]) {
+  constructor(
+    statusCode: number,
+    message: string,
+    code: ErrorCode,
+    details?: FieldError[],
+  ) {
     super(message);
     this.name = 'HttpError';
     this.statusCode = statusCode;

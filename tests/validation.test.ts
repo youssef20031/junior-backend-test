@@ -13,7 +13,8 @@ interface Detail {
   message: string;
 }
 
-const detailsOf = (body: { error: { details?: Detail[] } }): Detail[] => body.error.details ?? [];
+const detailsOf = (body: { error: { details?: Detail[] } }): Detail[] =>
+  body.error.details ?? [];
 
 /**
  * The four rules the brief specifies, one describe block each. Every case goes
@@ -46,7 +47,9 @@ describe('name — required', () => {
 
 describe('category — optional, but a string when present', () => {
   it('accepts the field being omitted', async () => {
-    const response = await post({ name: 'No Category', price: 10, quantity: 1 }).expect(201);
+    const response = await post({ name: 'No Category', price: 10, quantity: 1 }).expect(
+      201,
+    );
     expect(response.body.data.product.category).toBeNull();
   });
 
@@ -71,8 +74,12 @@ describe('category — optional, but a string when present', () => {
     ['a boolean', true],
     ['an object', { nested: 'value' }],
   ])('rejects a category that is %s', async (_label, category) => {
-    const response = await post({ name: 'Bad Category', category, price: 10, quantity: 1 })
-      .expect(400);
+    const response = await post({
+      name: 'Bad Category',
+      category,
+      price: 10,
+      quantity: 1,
+    }).expect(400);
 
     expect(detailsOf(response.body)).toEqual([
       { field: 'category', message: 'category must be a string' },
@@ -93,7 +100,11 @@ describe('price — a positive number', () => {
     ['omitted', { name: 'P', quantity: 1 }, 'price is required'],
     ['null', { name: 'P', price: null, quantity: 1 }, 'price is required'],
     ['zero', { name: 'P', price: 0, quantity: 1 }, 'price must be a positive number'],
-    ['negative', { name: 'P', price: -1, quantity: 1 }, 'price must be a positive number'],
+    [
+      'negative',
+      { name: 'P', price: -1, quantity: 1 },
+      'price must be a positive number',
+    ],
     [
       'not a number',
       { name: 'P', price: 'expensive', quantity: 1 },

@@ -34,7 +34,10 @@ function buildAuthResult(user: Parameters<typeof serializeUser>[0]): AuthResult 
  * Creates an account. The role is hard-coded to `user` and never read from the
  * request, so this endpoint cannot be used to mint an administrator.
  */
-export async function registerUser({ email, password }: Credentials): Promise<AuthResult> {
+export async function registerUser({
+  email,
+  password,
+}: Credentials): Promise<AuthResult> {
   // Checked up front for a clear 409 message. The unique index on `email` is
   // what actually guarantees uniqueness under concurrency; a duplicate that
   // slips past this check surfaces as a Mongo 11000 error, which the central

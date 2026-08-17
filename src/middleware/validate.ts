@@ -17,11 +17,13 @@ export const validate: RequestHandler = (req, _res, next) => {
     return;
   }
 
-  const details: FieldError[] = result.array().map((error) =>
-    error.type === 'field'
-      ? { field: error.path, message: error.msg as string }
-      : { field: 'request', message: error.msg as string },
-  );
+  const details: FieldError[] = result
+    .array()
+    .map((error) =>
+      error.type === 'field'
+        ? { field: error.path, message: error.msg as string }
+        : { field: 'request', message: error.msg as string },
+    );
 
   next(HttpError.validation(details));
 };

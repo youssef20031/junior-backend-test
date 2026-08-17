@@ -48,13 +48,19 @@ function toHttpError(error: unknown): HttpError {
 
   if (error instanceof mongoose.Error.CastError) {
     return HttpError.validation([
-      { field: error.path, message: `'${String(error.value)}' is not a valid ${error.kind}` },
+      {
+        field: error.path,
+        message: `'${String(error.value)}' is not a valid ${error.kind}`,
+      },
     ]);
   }
 
   if (isDuplicateKeyError(error)) {
     const field = Object.keys(error.keyValue ?? {})[0] ?? 'value';
-    return HttpError.conflict(`A record with this ${field} already exists`, 'EMAIL_IN_USE');
+    return HttpError.conflict(
+      `A record with this ${field} already exists`,
+      'EMAIL_IN_USE',
+    );
   }
 
   return HttpError.internal();

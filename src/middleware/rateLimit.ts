@@ -7,7 +7,9 @@ import { HttpError } from '../utils/HttpError';
 const passthrough: RequestHandler = (_req, _res, next) => next();
 
 const rejectWith429: RequestHandler = (_req, _res, next) => {
-  next(HttpError.tooManyRequests('Too many requests — please slow down and try again later'));
+  next(
+    HttpError.tooManyRequests('Too many requests — please slow down and try again later'),
+  );
 };
 
 /** Broad protection against a single client hammering the whole API. */

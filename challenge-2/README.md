@@ -1,9 +1,9 @@
 # Challenge 2 — Database Query Optimization
 
-| File | Contents |
-|---|---|
-| [`schema.sql`](./schema.sql) | PostgreSQL `products` table and its indexes |
-| [`queries.sql`](./queries.sql) | The price-range query, a keyset variant, counting strategies, and how to read `EXPLAIN` |
+| File                                     | Contents                                                                                          |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| [`schema.sql`](./schema.sql)             | PostgreSQL `products` table and its indexes                                                       |
+| [`queries.sql`](./queries.sql)           | The price-range query, a keyset variant, counting strategies, and how to read `EXPLAIN`           |
 | [`queries.mongo.js`](./queries.mongo.js) | The category query, aggregation and `$facet` variants, keyset paging, and how to read `explain()` |
 
 Both queries are also live in the API — `listProducts` in
@@ -70,7 +70,7 @@ db.products
     { category: 'Electronics' },
     { name: 1, category: 1, price: 1, quantity: 1, createdAt: 1 },
   )
-  .sort({ price: -1, _id: -1 })   // _id breaks price ties, so paging is stable
+  .sort({ price: -1, _id: -1 }) // _id breaks price ties, so paging is stable
   .skip((page - 1) * 5)
   .limit(5);
 ```
@@ -81,13 +81,13 @@ Supporting index:
 db.products.createIndex({ category: 1, price: -1 });
 ```
 
-The field order is the whole point, and it follows the **ESR rule** — *Equality,
-Sort, Range*:
+The field order is the whole point, and it follows the **ESR rule** — _Equality,
+Sort, Range_:
 
-| Index | Behaviour |
-|---|---|
+| Index                        | Behaviour                                                                               |
+| ---------------------------- | --------------------------------------------------------------------------------------- |
 | `{ category: 1, price: -1 }` | Seek to the category's slice, walk it already in descending price order. No sort stage. |
-| `{ price: -1, category: 1 }` | Scan the entire index, filter on category, then sort the survivors. |
+| `{ price: -1, category: 1 }` | Scan the entire index, filter on category, then sort the survivors.                     |
 
 The projection is not cosmetic either — it cuts bytes off the wire and out of
 every cache layer, and restricting it to indexed fields is what makes a covering
@@ -142,7 +142,7 @@ preceding row. Page 1 reads 10 rows; page 10,000 reads 100,010 and throws away
 100,000. The endpoint degrades the further a user scrolls, and this is invisible
 in testing because test datasets are small.
 
-Keyset (seek) pagination replaces *"skip N rows"* with *"resume after this row"*,
+Keyset (seek) pagination replaces _"skip N rows"_ with _"resume after this row"_,
 which the index can seek to directly — O(page size), so page 10,000 costs the
 same as page 1:
 
@@ -173,7 +173,7 @@ cheapest first:
    exists — fetch `limit + 1` rows and return `limit`.
 2. **Estimate it.** `reltuples` from `pg_class`, or `estimatedDocumentCount()` in
    MongoDB, read from stored metadata without touching the data. Accurate to a
-   few percent, which is plenty for *"about 12,000 results"*.
+   few percent, which is plenty for _"about 12,000 results"_.
 3. **Cache it** per filter combination with a short TTL.
 4. **Maintain it** in a counters table or collection, updated by a trigger or on
    the write path, when the number must be exact.
@@ -187,11 +187,11 @@ first thing I would change at millions.
 Product listings are read-mostly, so a cache in front of the database absorbs the
 majority of traffic. Layered, cheapest first:
 
-| Layer | Mechanism | Typical TTL |
-|---|---|---|
-| Client / CDN | `Cache-Control`, `ETag` + `304 Not Modified` | 30–60 s |
-| Application | Redis, keyed by the full query | 1–5 min |
-| Database | Postgres shared buffers / MongoDB WiredTiger cache | — |
+| Layer        | Mechanism                                          | Typical TTL |
+| ------------ | -------------------------------------------------- | ----------- |
+| Client / CDN | `Cache-Control`, `ETag` + `304 Not Modified`       | 30–60 s     |
+| Application  | Redis, keyed by the full query                     | 1–5 min     |
+| Database     | Postgres shared buffers / MongoDB WiredTiger cache | —           |
 
 The Redis key must include every parameter that changes the result, or two
 different requests will collide:
@@ -210,7 +210,7 @@ Two details that matter more than the caching itself:
   concurrent request misses at once and hits the database together. Recompute
   under a short lock, or serve the stale value while one worker refreshes it.
 
-Cache *individual products* by id too — `GET /products/:id` is the highest-volume
+Cache _individual products_ by id too — `GET /products/:id` is the highest-volume
 endpoint in most catalogues, and a single-key lookup is trivially cacheable.
 
 ### 3.5 Reduce per-request work
@@ -255,13 +255,13 @@ db.products.find(...).explain('executionStats');   // MongoDB
 
 The numbers to watch:
 
-| Signal | Meaning |
-|---|---|
-| `Seq Scan` / `COLLSCAN` | No index used — the whole table is being read |
-| `Sort Method: external merge Disk` | The sort spilled to disk |
-| `totalDocsExamined >> nReturned` | The index is not selective enough, or is missing |
-| `totalDocsExamined: 0` | Covered query — answered from the index alone |
-| estimated `rows` far from `actual rows` | Stale statistics; run `ANALYZE` |
+| Signal                                  | Meaning                                          |
+| --------------------------------------- | ------------------------------------------------ |
+| `Seq Scan` / `COLLSCAN`                 | No index used — the whole table is being read    |
+| `Sort Method: external merge Disk`      | The sort spilled to disk                         |
+| `totalDocsExamined >> nReturned`        | The index is not selective enough, or is missing |
+| `totalDocsExamined: 0`                  | Covered query — answered from the index alone    |
+| estimated `rows` far from `actual rows` | Stale statistics; run `ANALYZE`                  |
 
 A sequential scan is not automatically wrong: when a filter matches most of the
 table, reading it sequentially genuinely beats random index lookups, and the
