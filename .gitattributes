@@ -1,0 +1,8 @@
+# Normalise line endings in the repository to LF, and check them out as LF on
+# every platform. Without this, Git's autocrlf converts files to CRLF on Windows
+# checkouts, which contradicts Prettier's `endOfLine: "lf"` and makes
+# `npm run format:check` fail on a freshly cloned repo.
+* text=auto eol=lf
+
+# Generated file — collapse it in diffs and reviews.
+package-lock.json linguist-generated=true
